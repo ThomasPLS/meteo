@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Météo France</title>
     <style>
         * {
@@ -13,28 +13,33 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
             background-color: #1f2937;
-            overflow-x: hidden;
         }
 
         .container {
             position: relative;
             width: 100%;
-            height: 100vh;
-            overflow-y: auto;
+            max-width: 1080px;
+            height: 1920px;
+            overflow: hidden;
         }
 
         .background {
-            position: fixed;
+            position: absolute;
             inset: 0;
             background-image: url('https://i.imgur.com/u1sUasM.jpeg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
+            transition: opacity 0.5s ease;
         }
 
         .overlay {
-            position: fixed;
+            position: absolute;
             inset: 0;
             background-color: rgba(0, 0, 0, 0.4);
         }
@@ -45,41 +50,49 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
-            padding: 15px;
+            padding: 40px 32px;
+            height: 100%;
         }
 
         .search-container {
             width: 100%;
-            max-width: 500px;
-            margin-bottom: 15px;
+            max-width: 600px;
+            margin-bottom: 30px;
             position: relative;
         }
 
         .search-box {
             width: 100%;
-            padding: 10px 40px 10px 15px;
-            font-size: 14px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 25px;
+            padding: 20px 60px 20px 25px;
+            font-size: 28px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
             background-color: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(10px);
             color: white;
             outline: none;
+            transition: all 0.3s ease;
         }
 
         .search-box::placeholder {
             color: rgba(255, 255, 255, 0.7);
         }
 
+        .search-box:focus {
+            background-color: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+        }
+
         .search-icon {
             position: absolute;
-            right: 12px;
+            right: 25px;
             top: 50%;
             transform: translateY(-50%);
-            width: 18px;
-            height: 18px;
+            width: 32px;
+            height: 32px;
             stroke: white;
+            pointer-events: none;
         }
 
         .suggestions {
@@ -87,14 +100,14 @@
             top: 100%;
             left: 0;
             right: 0;
-            margin-top: 5px;
+            margin-top: 10px;
             background-color: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            border-radius: 12px;
-            max-height: 200px;
+            border-radius: 20px;
+            max-height: 300px;
             overflow-y: auto;
             display: none;
-            z-index: 1000;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
         }
 
         .suggestions.active {
@@ -102,11 +115,16 @@
         }
 
         .suggestion-item {
-            padding: 10px 15px;
+            padding: 18px 25px;
             cursor: pointer;
             color: #1f2937;
-            font-size: 14px;
+            font-size: 24px;
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s ease;
+        }
+
+        .suggestion-item:hover {
+            background-color: rgba(59, 130, 246, 0.1);
         }
 
         .suggestion-item:last-child {
@@ -115,45 +133,45 @@
 
         .header {
             text-align: center;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
         }
 
         .city {
-            font-size: 32px;
+            font-size: 70px;
             font-weight: bold;
             color: white;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
-            margin-bottom: 5px;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+            margin-bottom: 16px;
         }
 
         .date {
-            font-size: 14px;
+            font-size: 30px;
             color: white;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
         }
 
         .weather-icon {
-            margin: 10px 0;
-            filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.8));
+            margin: 4px 0 3px 0;
+            filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.8));
         }
 
         .weather-icon svg {
-            width: 60px;
-            height: 60px;
+            width: 75px;
+            height: 75px;
             stroke: white;
             fill: none;
             stroke-width: 1.5;
         }
 
         .loader {
-            width: 60px;
-            height: 60px;
-            border: 3px solid transparent;
-            border-top: 3px solid white;
-            border-bottom: 3px solid white;
+            width: 160px;
+            height: 160px;
+            border: 4px solid transparent;
+            border-top: 4px solid white;
+            border-bottom: 4px solid white;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin: 20px 0;
+            margin: 8px 0;
         }
 
         @keyframes spin {
@@ -162,48 +180,42 @@
         }
 
         .temperature {
-            font-size: 64px;
+            font-size: 100px;
             font-weight: bold;
             color: white;
-            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.9);
-            margin: 5px 0;
+            text-shadow: 0 8px 30px rgba(0, 0, 0, 0.9);
+            margin-bottom: 2px;
         }
 
         .description {
-            font-size: 20px;
+            font-size: 40px;
             color: white;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
             text-transform: capitalize;
-            margin-bottom: 10px;
         }
 
         .hidden {
             display: none;
         }
 
-        .spacer {
-            flex: 1;
-            min-height: 20px;
-        }
-
         .forecast-tomorrow {
+            margin-top: 950px;
+            margin-bottom: 60px;
             text-align: center;
-            padding: 20px 0 30px 0;
-            width: 100%;
         }
 
         .forecast-title {
-            font-size: 28px;
+            font-size: 48px;
             color: white;
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .forecast-content {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 15px;
         }
 
         .forecast-icon {
@@ -211,63 +223,45 @@
         }
 
         .forecast-icon svg {
-            width: 60px;
-            height: 60px;
+            width: 100px;
+            height: 100px;
             stroke: white;
             fill: none;
             stroke-width: 1.5;
         }
 
         .forecast-temp {
-            font-size: 40px;
+            font-size: 64px;
             font-weight: bold;
             color: white;
-            text-shadow: 0 2px 15px rgba(0, 0, 0, 0.9);
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.9);
         }
 
         .forecast-desc {
-            font-size: 18px;
+            font-size: 40px;
             color: white;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
         }
 
         .error-message {
             background-color: rgba(239, 68, 68, 0.9);
             color: white;
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-size: 14px;
-            margin: 10px 0;
+            padding: 20px 30px;
+            border-radius: 15px;
+            font-size: 24px;
+            margin: 20px 0;
+            text-align: center;
             display: none;
         }
 
         .error-message.active {
             display: block;
         }
-
-        /* Pour mobile, ajuster légèrement */
-        @media (max-width: 400px) {
-            .city {
-                font-size: 28px;
-            }
-            
-            .temperature {
-                font-size: 56px;
-            }
-            
-            .forecast-title {
-                font-size: 24px;
-            }
-            
-            .forecast-temp {
-                font-size: 36px;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="background"></div>
+        <div class="background" id="background"></div>
         <div class="overlay"></div>
         
         <div class="content">
@@ -302,8 +296,6 @@
                 </div>
             </div>
 
-            <div class="spacer"></div>
-
             <div class="forecast-tomorrow">
                 <div class="forecast-title">Demain</div>
                 <div class="forecast-content">
@@ -318,58 +310,112 @@
     </div>
 
     <script>
-        const frenchCities = [
-            { name: "Paris", lat: 48.8566, lon: 2.3522 },
-            { name: "Marseille", lat: 43.2965, lon: 5.3698 },
-            { name: "Lyon", lat: 45.7640, lon: 4.8357 },
-            { name: "Toulouse", lat: 43.6047, lon: 1.4442 },
-            { name: "Nice", lat: 43.7102, lon: 7.2620 },
-            { name: "Nantes", lat: 47.2184, lon: -1.5536 },
-            { name: "Strasbourg", lat: 48.5734, lon: 7.7521 },
-            { name: "Montpellier", lat: 43.6108, lon: 3.8767 },
-            { name: "Bordeaux", lat: 44.8378, lon: -0.5792 },
-            { name: "Lille", lat: 50.6292, lon: 3.0573 },
-            { name: "Rennes", lat: 48.1173, lon: -1.6778 },
-            { name: "Reims", lat: 49.2583, lon: 4.0317 },
-            { name: "Le Havre", lat: 49.4944, lon: 0.1079 },
-            { name: "Saint-Étienne", lat: 45.4397, lon: 4.3872 },
-            { name: "Toulon", lat: 43.1242, lon: 5.9280 },
-            { name: "Grenoble", lat: 45.1885, lon: 5.7245 },
-            { name: "Dijon", lat: 47.3220, lon: 5.0415 },
-            { name: "Angers", lat: 47.4784, lon: -0.5632 },
-            { name: "Nîmes", lat: 43.8367, lon: 4.3601 },
-            { name: "Villeurbanne", lat: 45.7667, lon: 4.8800 },
-            { name: "Clermont-Ferrand", lat: 45.7772, lon: 3.0870 },
-            { name: "Le Mans", lat: 48.0077, lon: 0.1984 },
-            { name: "Aix-en-Provence", lat: 43.5297, lon: 5.4474 },
-            { name: "Brest", lat: 48.3905, lon: -4.4860 },
-            { name: "Tours", lat: 47.3941, lon: 0.6848 },
-            { name: "Amiens", lat: 49.8942, lon: 2.2957 },
-            { name: "Limoges", lat: 45.8336, lon: 1.2611 },
-            { name: "Annecy", lat: 45.8992, lon: 6.1294 },
-            { name: "Perpignan", lat: 42.6886, lon: 2.8948 },
-            { name: "Boulogne-Billancourt", lat: 48.8356, lon: 2.2410 },
-            { name: "Metz", lat: 49.1193, lon: 6.1757 },
-            { name: "Besançon", lat: 47.2380, lon: 6.0243 },
-            { name: "Orléans", lat: 47.9029, lon: 1.9093 },
-            { name: "Rouen", lat: 49.4432, lon: 1.0993 },
-            { name: "Mulhouse", lat: 47.7508, lon: 7.3359 },
-            { name: "Caen", lat: 49.1829, lon: -0.3707 },
-            { name: "Nancy", lat: 48.6921, lon: 6.1844 },
-            { name: "Argenteuil", lat: 48.9479, lon: 2.2505 },
-            { name: "Montreuil", lat: 48.8634, lon: 2.4444 },
-            { name: "Saint-Denis", lat: 48.9362, lon: 2.3574 },
-            { name: "Roubaix", lat: 50.6942, lon: 3.1746 },
-            { name: "Tourcoing", lat: 50.7239, lon: 3.1609 },
-            { name: "Nanterre", lat: 48.8925, lon: 2.2069 },
-            { name: "Avignon", lat: 43.9493, lon: 4.8055 },
-            { name: "Créteil", lat: 48.7900, lon: 2.4553 },
-            { name: "Poitiers", lat: 46.5802, lon: 0.3404 },
-            { name: "Dunkerque", lat: 51.0343, lon: 2.3768 },
-            { name: "Évry", lat: 48.6289, lon: 2.4264 },
-            { name: "Versailles", lat: 48.8014, lon: 2.1301 },
-            { name: "Cannes", lat: 43.5528, lon: 7.0174 }
-        ];
+        // Villes françaises populaires
+        // REMPLACEZ TOUTE LA SECTION "const frenchCities = [...];" par ceci :
+
+const frenchCities = [
+    // Préfectures françaises (métropole)
+    { name: "Agen", dept: "Lot-et-Garonne", num: "47", lat: 44.2028, lon: 0.6167 },
+    { name: "Ajaccio", dept: "Corse-du-Sud", num: "2A", lat: 41.9267, lon: 8.7369 },
+    { name: "Albi", dept: "Tarn", num: "81", lat: 43.9283, lon: 2.1480 },
+    { name: "Alençon", dept: "Orne", num: "61", lat: 48.4328, lon: 0.0914 },
+    { name: "Amiens", dept: "Somme", num: "80", lat: 49.8942, lon: 2.2957 },
+    { name: "Angoulême", dept: "Charente", num: "16", lat: 45.6484, lon: 0.1561 },
+    { name: "Annecy", dept: "Haute-Savoie", num: "74", lat: 45.8992, lon: 6.1294 },
+    { name: "Arras", dept: "Pas-de-Calais", num: "62", lat: 50.2920, lon: 2.7801 },
+    { name: "Auch", dept: "Gers", num: "32", lat: 43.6462, lon: 0.5858 },
+    { name: "Aurillac", dept: "Cantal", num: "15", lat: 44.9264, lon: 2.4399 },
+    { name: "Auxerre", dept: "Yonne", num: "89", lat: 47.7982, lon: 3.5731 },
+    { name: "Avignon", dept: "Vaucluse", num: "84", lat: 43.9493, lon: 4.8055 },
+    { name: "Bar-le-Duc", dept: "Meuse", num: "55", lat: 48.7725, lon: 5.1606 },
+    { name: "Bastia", dept: "Haute-Corse", num: "2B", lat: 42.7026, lon: 9.4497 },
+    { name: "Beauvais", dept: "Oise", num: "60", lat: 49.4294, lon: 2.0808 },
+    { name: "Belfort", dept: "Territoire de Belfort", num: "90", lat: 47.6383, lon: 6.8628 },
+    { name: "Besançon", dept: "Doubs", num: "25", lat: 47.2380, lon: 6.0243 },
+    { name: "Blois", dept: "Loir-et-Cher", num: "41", lat: 47.5933, lon: 1.3281 },
+    { name: "Bobigny", dept: "Seine-Saint-Denis", num: "93", lat: 48.9075, lon: 2.4489 },
+    { name: "Bordeaux", dept: "Gironde", num: "33", lat: 44.8378, lon: -0.5792 },
+    { name: "Bourg-en-Bresse", dept: "Ain", num: "01", lat: 46.2051, lon: 5.2259 },
+    { name: "Bourges", dept: "Cher", num: "18", lat: 47.0844, lon: 2.3964 },
+    { name: "Caen", dept: "Calvados", num: "14", lat: 49.1829, lon: -0.3707 },
+    { name: "Cahors", dept: "Lot", num: "46", lat: 44.4479, lon: 1.4411 },
+    { name: "Carcassonne", dept: "Aude", num: "11", lat: 43.2130, lon: 2.3491 },
+    { name: "Cergy", dept: "Val-d'Oise", num: "95", lat: 49.0367, lon: 2.0778 },
+    { name: "Châlons-en-Champagne", dept: "Marne", num: "51", lat: 48.9535, lon: 4.3686 },
+    { name: "Chambéry", dept: "Savoie", num: "73", lat: 45.5647, lon: 5.9178 },
+    { name: "Charleville-Mézières", dept: "Ardennes", num: "08", lat: 49.7631, lon: 4.7197 },
+    { name: "Chartres", dept: "Eure-et-Loir", num: "28", lat: 48.4469, lon: 1.4892 },
+    { name: "Châteauroux", dept: "Indre", num: "36", lat: 46.8119, lon: 1.6931 },
+    { name: "Chaumont", dept: "Haute-Marne", num: "52", lat: 48.1103, lon: 5.1394 },
+    { name: "Clermont-Ferrand", dept: "Puy-de-Dôme", num: "63", lat: 45.7772, lon: 3.0870 },
+    { name: "Colmar", dept: "Haut-Rhin", num: "68", lat: 48.0777, lon: 7.3579 },
+    { name: "Créteil", dept: "Val-de-Marne", num: "94", lat: 48.7900, lon: 2.4553 },
+    { name: "Digne-les-Bains", dept: "Alpes-de-Haute-Provence", num: "04", lat: 44.0926, lon: 6.2361 },
+    { name: "Dijon", dept: "Côte-d'Or", num: "21", lat: 47.3220, lon: 5.0415 },
+    { name: "Épinal", dept: "Vosges", num: "88", lat: 48.1747, lon: 6.4494 },
+    { name: "Évreux", dept: "Eure", num: "27", lat: 49.0247, lon: 1.1508 },
+    { name: "Évry-Courcouronnes", dept: "Essonne", num: "91", lat: 48.6289, lon: 2.4264 },
+    { name: "Foix", dept: "Ariège", num: "09", lat: 42.9656, lon: 1.6053 },
+    { name: "Gap", dept: "Hautes-Alpes", num: "05", lat: 44.5597, lon: 6.0786 },
+    { name: "Grenoble", dept: "Isère", num: "38", lat: 45.1885, lon: 5.7245 },
+    { name: "Guéret", dept: "Creuse", num: "23", lat: 46.1703, lon: 1.8711 },
+    { name: "La Roche-sur-Yon", dept: "Vendée", num: "85", lat: 46.6700, lon: -1.4269 },
+    { name: "La Rochelle", dept: "Charente-Maritime", num: "17", lat: 46.1603, lon: -1.1511 },
+    { name: "Laon", dept: "Aisne", num: "02", lat: 49.5639, lon: 3.6244 },
+    { name: "Laval", dept: "Mayenne", num: "53", lat: 48.0694, lon: -0.7700 },
+    { name: "Le Puy-en-Velay", dept: "Haute-Loire", num: "43", lat: 45.0439, lon: 3.8850 },
+    { name: "Lille", dept: "Nord", num: "59", lat: 50.6292, lon: 3.0573 },
+    { name: "Limoges", dept: "Haute-Vienne", num: "87", lat: 45.8336, lon: 1.2611 },
+    { name: "Lons-le-Saunier", dept: "Jura", num: "39", lat: 46.6750, lon: 5.5542 },
+    { name: "Lyon", dept: "Rhône", num: "69", lat: 45.7640, lon: 4.8357 },
+    { name: "Mâcon", dept: "Saône-et-Loire", num: "71", lat: 46.3067, lon: 4.8331 },
+    { name: "Le Mans", dept: "Sarthe", num: "72", lat: 48.0077, lon: 0.1984 },
+    { name: "Marseille", dept: "Bouches-du-Rhône", num: "13", lat: 43.2965, lon: 5.3698 },
+    { name: "Melun", dept: "Seine-et-Marne", num: "77", lat: 48.5394, lon: 2.6606 },
+    { name: "Mende", dept: "Lozère", num: "48", lat: 44.5181, lon: 3.4989 },
+    { name: "Metz", dept: "Moselle", num: "57", lat: 49.1193, lon: 6.1757 },
+    { name: "Mont-de-Marsan", dept: "Landes", num: "40", lat: 43.8911, lon: -0.4989 },
+    { name: "Montauban", dept: "Tarn-et-Garonne", num: "82", lat: 44.0178, lon: 1.3539 },
+    { name: "Montpellier", dept: "Hérault", num: "34", lat: 43.6108, lon: 3.8767 },
+    { name: "Moulins", dept: "Allier", num: "03", lat: 46.5664, lon: 3.3336 },
+    { name: "Nancy", dept: "Meurthe-et-Moselle", num: "54", lat: 48.6921, lon: 6.1844 },
+    { name: "Nanterre", dept: "Hauts-de-Seine", num: "92", lat: 48.8925, lon: 2.2069 },
+    { name: "Nantes", dept: "Loire-Atlantique", num: "44", lat: 47.2184, lon: -1.5536 },
+    { name: "Nevers", dept: "Nièvre", num: "58", lat: 46.9894, lon: 3.1572 },
+    { name: "Nice", dept: "Alpes-Maritimes", num: "06", lat: 43.7102, lon: 7.2620 },
+    { name: "Nîmes", dept: "Gard", num: "30", lat: 43.8367, lon: 4.3601 },
+    { name: "Niort", dept: "Deux-Sèvres", num: "79", lat: 46.3236, lon: -0.4594 },
+    { name: "Orléans", dept: "Loiret", num: "45", lat: 47.9029, lon: 1.9093 },
+    { name: "Paris", dept: "Paris", num: "75", lat: 48.8566, lon: 2.3522 },
+    { name: "Pau", dept: "Pyrénées-Atlantiques", num: "64", lat: 43.2951, lon: -0.3708 },
+    { name: "Périgueux", dept: "Dordogne", num: "24", lat: 45.1844, lon: 0.7214 },
+    { name: "Perpignan", dept: "Pyrénées-Orientales", num: "66", lat: 42.6886, lon: 2.8948 },
+    { name: "Poitiers", dept: "Vienne", num: "86", lat: 46.5802, lon: 0.3404 },
+    { name: "Privas", dept: "Ardèche", num: "07", lat: 44.7353, lon: 4.5989 },
+    { name: "Quimper", dept: "Finistère", num: "29", lat: 47.9960, lon: -4.0975 },
+    { name: "Rennes", dept: "Ille-et-Vilaine", num: "35", lat: 48.1173, lon: -1.6778 },
+    { name: "Rodez", dept: "Aveyron", num: "12", lat: 44.3503, lon: 2.5750 },
+    { name: "Rouen", dept: "Seine-Maritime", num: "76", lat: 49.4432, lon: 1.0993 },
+    { name: "Saint-Brieuc", dept: "Côtes-d'Armor", num: "22", lat: 48.5144, lon: -2.7650 },
+    { name: "Saint-Denis", dept: "Seine-Saint-Denis", num: "93", lat: 48.9362, lon: 2.3574 },
+    { name: "Saint-Étienne", dept: "Loire", num: "42", lat: 45.4397, lon: 4.3872 },
+    { name: "Saint-Lô", dept: "Manche", num: "50", lat: 49.1150, lon: -1.0917 },
+    { name: "Strasbourg", dept: "Bas-Rhin", num: "67", lat: 48.5734, lon: 7.7521 },
+    { name: "Tarbes", dept: "Hautes-Pyrénées", num: "65", lat: 43.2328, lon: 0.0781 },
+    { name: "Toulon", dept: "Var", num: "83", lat: 43.1242, lon: 5.9280 },
+    { name: "Toulouse", dept: "Haute-Garonne", num: "31", lat: 43.6047, lon: 1.4442 },
+    { name: "Tours", dept: "Indre-et-Loire", num: "37", lat: 47.3941, lon: 0.6848 },
+    { name: "Troyes", dept: "Aube", num: "10", lat: 48.2973, lon: 4.0744 },
+    { name: "Tulle", dept: "Corrèze", num: "19", lat: 45.2664, lon: 1.7714 },
+    { name: "Valence", dept: "Drôme", num: "26", lat: 44.9333, lon: 4.8925 },
+    { name: "Vannes", dept: "Morbihan", num: "56", lat: 47.6583, lon: -2.7603 },
+    { name: "Versailles", dept: "Yvelines", num: "78", lat: 48.8014, lon: 2.1301 },
+    { name: "Vesoul", dept: "Haute-Saône", num: "70", lat: 47.6217, lon: 6.1544 },
+    // Outre-mer
+    { name: "Basse-Terre", dept: "Guadeloupe", num: "971", lat: 15.9979, lon: -61.7273 },
+    { name: "Cayenne", dept: "Guyane", num: "973", lat: 4.9333, lon: -52.3333 },
+    { name: "Fort-de-France", dept: "Martinique", num: "972", lat: 14.6161, lon: -61.0580 }
+];
 
         let currentCity = { name: "Évry", lat: 48.6289, lon: 2.4264 };
 
@@ -377,6 +423,7 @@
         const suggestionsContainer = document.getElementById('suggestions');
         const errorMessage = document.getElementById('errorMessage');
 
+        // Gestion de la recherche
         searchBox.addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase().trim();
             
@@ -401,6 +448,7 @@
             }
         });
 
+        // Sélection d'une ville
         suggestionsContainer.addEventListener('click', (e) => {
             if (e.target.classList.contains('suggestion-item')) {
                 const name = e.target.dataset.name;
@@ -416,20 +464,40 @@
             }
         });
 
+        // Fermer les suggestions en cliquant ailleurs
         document.addEventListener('click', (e) => {
             if (!searchBox.contains(e.target) && !suggestionsContainer.contains(e.target)) {
                 suggestionsContainer.classList.remove('active');
             }
         });
 
-        searchBox.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                const firstSuggestion = suggestionsContainer.querySelector('.suggestion-item');
-                if (firstSuggestion) {
-                    firstSuggestion.click();
-                }
-            }
-        });
+        // Recherche avec Entrée
+        // REMPLACEZ la fonction de recherche par :
+searchBox.addEventListener('input', (e) => {
+    const searchTerm = e.target.value.toLowerCase().trim();
+    
+    if (searchTerm.length < 1) {
+        suggestionsContainer.classList.remove('active');
+        return;
+    }
+
+    const filtered = frenchCities.filter(city => 
+        city.name.toLowerCase().includes(searchTerm) ||
+        city.dept.toLowerCase().includes(searchTerm) ||
+        city.num.toLowerCase().includes(searchTerm)
+    );
+
+    if (filtered.length > 0) {
+        suggestionsContainer.innerHTML = filtered.slice(0, 10).map(city => 
+            `<div class="suggestion-item" data-name="${city.name}" data-dept="${city.dept}" data-num="${city.num}" data-lat="${city.lat}" data-lon="${city.lon}">
+                <strong>${city.name}</strong> - ${city.dept} (${city.num})
+            </div>`
+        ).join('');
+        suggestionsContainer.classList.add('active');
+    } else {
+        suggestionsContainer.classList.remove('active');
+    }
+});
 
         function displayDate() {
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
