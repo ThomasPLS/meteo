@@ -32,7 +32,7 @@
             position: absolute;
             inset: 0;
             background-image: url('https://i.imgur.com/u1sUasM.jpeg');
-            background-size: contain;
+            background-size: 100% auto;
             background-position: center top;
             background-repeat: no-repeat;
             transition: opacity 0.5s ease;
@@ -472,32 +472,14 @@ const frenchCities = [
         });
 
         // Recherche avec Entrée
-        // REMPLACEZ la fonction de recherche par :
-searchBox.addEventListener('input', (e) => {
-    const searchTerm = e.target.value.toLowerCase().trim();
-    
-    if (searchTerm.length < 1) {
-        suggestionsContainer.classList.remove('active');
-        return;
-    }
-
-    const filtered = frenchCities.filter(city => 
-        city.name.toLowerCase().includes(searchTerm) ||
-        city.dept.toLowerCase().includes(searchTerm) ||
-        city.num.toLowerCase().includes(searchTerm)
-    );
-
-    if (filtered.length > 0) {
-        suggestionsContainer.innerHTML = filtered.slice(0, 10).map(city => 
-            `<div class="suggestion-item" data-name="${city.name}" data-dept="${city.dept}" data-num="${city.num}" data-lat="${city.lat}" data-lon="${city.lon}">
-                <strong>${city.name}</strong> - ${city.dept} (${city.num})
-            </div>`
-        ).join('');
-        suggestionsContainer.classList.add('active');
-    } else {
-        suggestionsContainer.classList.remove('active');
-    }
-});
+        searchBox.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const firstSuggestion = suggestionsContainer.querySelector('.suggestion-item');
+                if (firstSuggestion) {
+                    firstSuggestion.click();
+                }
+            }
+        });
 
         function displayDate() {
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
