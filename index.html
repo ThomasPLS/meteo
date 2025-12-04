@@ -19,8 +19,10 @@
 
         .container {
             position: relative;
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            max-width: 1080px;
+            height: 1920px;
+            margin: 0 auto;
             overflow: hidden;
         }
 
@@ -28,8 +30,8 @@
             position: absolute;
             inset: 0;
             background-image: url('https://i.imgur.com/u1sUasM.jpeg');
-            background-size: cover;
-            background-position: center;
+            background-size: 100% auto;
+            background-position: center top;
             background-repeat: no-repeat;
         }
 
@@ -45,23 +47,23 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-between;
-            padding: 20px 16px;
+            padding: 40px 32px;
             height: 100%;
         }
 
         .search-container {
             width: 100%;
-            max-width: 400px;
+            max-width: 600px;
+            margin-bottom: 30px;
             position: relative;
         }
 
         .search-box {
             width: 100%;
-            padding: 12px 45px 12px 20px;
-            font-size: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 25px;
+            padding: 20px 60px 20px 25px;
+            font-size: 28px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
             background-color: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(10px);
             color: white;
@@ -76,16 +78,16 @@
         .search-box:focus {
             background-color: rgba(255, 255, 255, 0.25);
             border-color: rgba(255, 255, 255, 0.5);
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
         }
 
         .search-icon {
             position: absolute;
-            right: 15px;
+            right: 25px;
             top: 50%;
             transform: translateY(-50%);
-            width: 20px;
-            height: 20px;
+            width: 32px;
+            height: 32px;
             stroke: white;
             pointer-events: none;
         }
@@ -95,15 +97,14 @@
             top: 100%;
             left: 0;
             right: 0;
-            margin-top: 8px;
+            margin-top: 10px;
             background-color: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            border-radius: 15px;
-            max-height: 200px;
+            border-radius: 20px;
+            max-height: 300px;
             overflow-y: auto;
             display: none;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-            z-index: 100;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
         }
 
         .suggestions.active {
@@ -111,10 +112,10 @@
         }
 
         .suggestion-item {
-            padding: 12px 20px;
+            padding: 18px 25px;
             cursor: pointer;
             color: #1f2937;
-            font-size: 15px;
+            font-size: 24px;
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
             transition: background-color 0.2s ease;
         }
@@ -127,50 +128,47 @@
             border-bottom: none;
         }
 
-        .main-weather {
+        .header {
             text-align: center;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 15px;
-        }
-
-        .city {
-            font-size: 28px;
-            font-weight: bold;
-            color: white;
-            text-shadow: 0 2px 15px rgba(0, 0, 0, 0.8);
-        }
-
-        .date {
-            font-size: 14px;
-            color: white;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
             margin-bottom: 10px;
         }
 
+        .city {
+            font-size: 70px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+            margin-bottom: 16px;
+        }
+
+        .date {
+            font-size: 30px;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+        }
+
         .weather-icon {
+            margin: 4px 0 3px 0;
             filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.8));
         }
 
         .weather-icon svg {
-            width: 80px;
-            height: 80px;
+            width: 75px;
+            height: 75px;
             stroke: white;
             fill: none;
             stroke-width: 1.5;
         }
 
         .loader {
-            width: 60px;
-            height: 60px;
-            border: 3px solid transparent;
-            border-top: 3px solid white;
-            border-bottom: 3px solid white;
+            width: 160px;
+            height: 160px;
+            border: 4px solid transparent;
+            border-top: 4px solid white;
+            border-bottom: 4px solid white;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin: 0 auto;
+            margin: 8px 0;
         }
 
         @keyframes spin {
@@ -179,14 +177,15 @@
         }
 
         .temperature {
-            font-size: 64px;
+            font-size: 100px;
             font-weight: bold;
             color: white;
             text-shadow: 0 8px 30px rgba(0, 0, 0, 0.9);
+            margin-bottom: 2px;
         }
 
         .description {
-            font-size: 22px;
+            font-size: 40px;
             color: white;
             text-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
             text-transform: capitalize;
@@ -197,21 +196,16 @@
         }
 
         .forecast-tomorrow {
-            width: 100%;
-            max-width: 400px;
-            background-color: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 20px;
+            margin-top: 950px;
+            margin-bottom: 60px;
             text-align: center;
         }
 
         .forecast-title {
-            font-size: 18px;
+            font-size: 48px;
             color: white;
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
-            margin-bottom: 12px;
-            font-weight: 600;
+            margin-bottom: 10px;
         }
 
         .forecast-content {
@@ -226,22 +220,22 @@
         }
 
         .forecast-icon svg {
-            width: 50px;
-            height: 50px;
+            width: 100px;
+            height: 100px;
             stroke: white;
             fill: none;
             stroke-width: 1.5;
         }
 
         .forecast-temp {
-            font-size: 32px;
+            font-size: 64px;
             font-weight: bold;
             color: white;
             text-shadow: 0 4px 15px rgba(0, 0, 0, 0.9);
         }
 
         .forecast-desc {
-            font-size: 16px;
+            font-size: 40px;
             color: white;
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
         }
@@ -249,16 +243,87 @@
         .error-message {
             background-color: rgba(239, 68, 68, 0.9);
             color: white;
-            padding: 12px 20px;
-            border-radius: 10px;
-            font-size: 14px;
-            margin: 10px 0;
+            padding: 20px 30px;
+            border-radius: 15px;
+            font-size: 24px;
+            margin: 20px 0;
             text-align: center;
             display: none;
         }
 
         .error-message.active {
             display: block;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 100vw;
+                height: 100vh;
+            }
+
+            .content {
+                padding: 20px 16px;
+            }
+
+            .search-box {
+                padding: 12px 45px 12px 20px;
+                font-size: 16px;
+            }
+
+            .search-icon {
+                width: 20px;
+                height: 20px;
+                right: 15px;
+            }
+
+            .city {
+                font-size: 28px;
+            }
+
+            .date {
+                font-size: 14px;
+            }
+
+            .weather-icon svg {
+                width: 60px;
+                height: 60px;
+            }
+
+            .temperature {
+                font-size: 64px;
+            }
+
+            .description {
+                font-size: 18px;
+            }
+
+            .forecast-tomorrow {
+                margin-top: auto;
+                margin-bottom: 20px;
+                width: calc(100% - 32px);
+                background-color: rgba(50, 60, 80, 0.7);
+                backdrop-filter: blur(20px);
+                border-radius: 20px;
+                padding: 20px;
+            }
+
+            .forecast-title {
+                font-size: 18px;
+                margin-bottom: 12px;
+            }
+
+            .forecast-icon svg {
+                width: 50px;
+                height: 50px;
+            }
+
+            .forecast-temp {
+                font-size: 32px;
+            }
+
+            .forecast-desc {
+                font-size: 16px;
+            }
         }
     </style>
 </head>
@@ -281,23 +346,21 @@
                 <div class="suggestions" id="suggestions"></div>
             </div>
 
-            <div class="main-weather">
-                <div class="error-message" id="errorMessage"></div>
+            <div class="error-message" id="errorMessage"></div>
 
-                <div>
-                    <h1 class="city" id="cityName">ÉVRY, FRANCE</h1>
-                    <p class="date" id="date"></p>
-                </div>
+            <div class="header">
+                <h1 class="city" id="cityName">ÉVRY, FRANCE</h1>
+                <p class="date" id="date"></p>
+            </div>
 
-                <div id="loader" class="loader"></div>
+            <div id="loader" class="loader"></div>
 
-                <div id="weatherContent" class="hidden">
-                    <div class="weather-icon" id="weatherIcon"></div>
-                    
-                    <div>
-                        <div class="temperature" id="temperature"></div>
-                        <div class="description" id="description"></div>
-                    </div>
+            <div id="weatherContent" class="hidden">
+                <div class="weather-icon" id="weatherIcon"></div>
+                
+                <div style="text-align: center;">
+                    <div class="temperature" id="temperature"></div>
+                    <div class="description" id="description"></div>
                 </div>
             </div>
 
