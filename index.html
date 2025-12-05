@@ -39,10 +39,18 @@
         .background {
             position: absolute;
             inset: 0;
-            background-image: url('https://i.imgur.com/u1sUasM.jpeg');
+            background-image: url('https://i.imgur.com/OxXZ4Kw.jpeg');
             background-size: 100% auto;
             background-position: center top;
             background-repeat: no-repeat;
+            transition: opacity 0.5s ease;
+        }
+
+        @media (max-width: 768px) {
+            .background {
+                background-size: cover;
+                background-position: center center;
+            }
         }
 
         .overlay {
@@ -271,11 +279,6 @@
                 height: 100vh;
             }
 
-            .background {
-                background-size: cover;
-                background-position: center center;
-            }
-
             .content {
                 padding: 20px 16px;
             }
@@ -364,7 +367,7 @@
             <div class="error-message" id="errorMessage"></div>
 
             <div class="header">
-                <h1 class="city" id="cityName">ÉVRY, FRANCE</h1>
+                <h1 class="city" id="cityName">LYON, FRANCE</h1>
                 <p class="date" id="date"></p>
             </div>
 
@@ -405,11 +408,19 @@
             { name: "Bordeaux", dept: "Gironde", num: "33", lat: 44.8378, lon: -0.5792 }
         ];
 
-        let currentCity = { name: "Évry", lat: 48.6289, lon: 2.4264 };
+        let currentCity = { name: "Lyon", lat: 45.7640, lon: 4.8357, bg: "https://i.imgur.com/OxXZ4Kw.jpeg" };
 
         const searchBox = document.getElementById('searchBox');
         const suggestionsContainer = document.getElementById('suggestions');
         const errorMessage = document.getElementById('errorMessage');
+
+        // Backgrounds par ville
+        const cityBackgrounds = {
+            "Lyon": "https://i.imgur.com/OxXZ4Kw.jpeg",
+            "Agen": "https://i.imgur.com/HMqUczV.jpeg",
+            "Ajaccio": "https://i.imgur.com/pkw74Jz.jpeg",
+            "Albi": "https://i.imgur.com/V5DVqqv.jpeg"
+        };
 
         searchBox.addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase().trim();
@@ -424,11 +435,13 @@
             );
 
             if (filtered.length > 0) {
-                suggestionsContainer.innerHTML = filtered.map(city => 
-                    `<div class="suggestion-item" data-name="${city.name}" data-lat="${city.lat}" data-lon="${city.lon}">
+                suggestionsContainer.innerHTML = filtered.map(city => {
+                    const bgUrl = cityBackgrounds[city.name] || '';
+                    console.log('Création suggestion pour', city.name, 'avec bg:', bgUrl);
+                    return `<div class="suggestion-item" data-name="${city.name}" data-lat="${city.lat}" data-lon="${city.lon}" data-bg="${bgUrl}">
                         ${city.name}
-                    </div>`
-                ).join('');
+                    </div>`;
+                }).join('');
                 suggestionsContainer.classList.add('active');
             } else {
                 suggestionsContainer.classList.remove('active');
@@ -440,10 +453,20 @@
                 const name = e.target.dataset.name;
                 const lat = parseFloat(e.target.dataset.lat);
                 const lon = parseFloat(e.target.dataset.lon);
+                const bg = e.target.dataset.bg;
                 
-                currentCity = { name, lat, lon };
+                console.log('Ville sélectionnée:', name, 'BG:', bg); // Debug
+                
+                currentCity = { name, lat, lon, bg };
                 searchBox.value = '';
                 suggestionsContainer.classList.remove('active');
+                
+                // Changer le background
+                if (bg) {
+                    const backgroundElement = document.getElementById('background');
+                    console.log('Changement de background vers:', bg); // Debug
+                    backgroundElement.style.backgroundImage = `url('${bg}')`;
+                }
                 
                 document.getElementById('cityName').textContent = name.toUpperCase() + ', FRANCE';
                 fetchWeather();
