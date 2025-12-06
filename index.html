@@ -441,21 +441,26 @@
         searchBox.addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase().trim();
             
-            if (searchTerm.length < 2) {
+            if (searchTerm.length < 1) {
                 suggestionsContainer.classList.remove('active');
                 return;
             }
 
-            const filtered = frenchCities.filter(city => 
-                city.name.toLowerCase().includes(searchTerm)
-            );
+            const filtered = frenchCities.filter(city => {
+                const cityName = city.name.toLowerCase();
+                const deptName = city.dept.toLowerCase();
+                const deptNum = city.num.toLowerCase();
+                
+                return cityName.includes(searchTerm) || 
+                       deptName.includes(searchTerm) || 
+                       deptNum.includes(searchTerm);
+            });
 
             if (filtered.length > 0) {
                 suggestionsContainer.innerHTML = filtered.map(city => {
                     const bgUrl = cityBackgrounds[city.name] || '';
-                    console.log('Création suggestion pour', city.name, 'avec bg:', bgUrl);
                     return `<div class="suggestion-item" data-name="${city.name}" data-lat="${city.lat}" data-lon="${city.lon}" data-bg="${bgUrl}">
-                        ${city.name}
+                        ${city.name} <span style="color: #64748b; font-size: 20px;">(${city.dept} - ${city.num})</span>
                     </div>`;
                 }).join('');
                 suggestionsContainer.classList.add('active');
@@ -653,4 +658,5 @@
     </script>
 </body>
 </html>
+
 
