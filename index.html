@@ -519,10 +519,20 @@
             });
 
             if (filtered.length > 0) {
+                // Grouper par département si la recherche est un numéro ou nom de département
+                const isDeptSearch = searchTerm.length <= 3 || filtered.every(city => 
+                    city.dept.toLowerCase().includes(searchTerm) || 
+                    city.num.toLowerCase().includes(searchTerm)
+                );
+                
                 suggestionsContainer.innerHTML = filtered.map(city => {
                     const bgUrl = cityBackgrounds[city.name] || '';
+                    const highlightText = isDeptSearch 
+                        ? `${city.name} <span style="color: #64748b; font-size: 20px;">(${city.dept} - ${city.num})</span>`
+                        : `${city.name} <span style="color: #64748b; font-size: 20px;">(${city.dept} - ${city.num})</span>`;
+                    
                     return `<div class="suggestion-item" data-name="${city.name}" data-lat="${city.lat}" data-lon="${city.lon}" data-bg="${bgUrl}">
-                        ${city.name} <span style="color: #64748b; font-size: 20px;">(${city.dept} - ${city.num})</span>
+                        ${highlightText}
                     </div>`;
                 }).join('');
                 suggestionsContainer.classList.add('active');
@@ -680,6 +690,7 @@
     </script>
 </body>
 </html>
+
 
 
 
