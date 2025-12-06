@@ -136,6 +136,11 @@
             font-size: 24px;
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
             transition: background-color 0.2s ease;
+            user-select: none;
+        }
+        
+        .suggestion-item * {
+            pointer-events: none;
         }
 
         .suggestion-item:hover {
@@ -480,8 +485,9 @@
         });
 
         suggestionsContainer.addEventListener('click', (e) => {
-            // Chercher l'élément suggestion-item le plus proche
-            const suggestionItem = e.target.closest('.suggestion-item');
+            const suggestionItem = e.target.classList.contains('suggestion-item') 
+                ? e.target 
+                : e.target.closest('.suggestion-item');
             
             if (suggestionItem) {
                 const name = suggestionItem.dataset.name;
