@@ -355,7 +355,7 @@
                 <input type="text" 
                        class="search-box" 
                        id="searchBox" 
-                       placeholder="Rechercher une ville..."
+                       placeholder="Rechercher une ville, département ou numéro..."
                        autocomplete="off">
                 <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="11" cy="11" r="8"></circle>
@@ -486,8 +486,6 @@
                 const lon = parseFloat(e.target.dataset.lon);
                 const bg = e.target.dataset.bg;
                 
-                console.log('Ville sélectionnée:', name, 'BG:', bg); // Debug
-                
                 currentCity = { name, lat, lon, bg };
                 searchBox.value = '';
                 suggestionsContainer.classList.remove('active');
@@ -495,7 +493,6 @@
                 // Changer le background
                 if (bg) {
                     const backgroundElement = document.getElementById('background');
-                    console.log('Changement de background vers:', bg); // Debug
                     backgroundElement.style.backgroundImage = `url('${bg}')`;
                 }
                 
