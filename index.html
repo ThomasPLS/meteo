@@ -480,11 +480,14 @@
         });
 
         suggestionsContainer.addEventListener('click', (e) => {
-            if (e.target.classList.contains('suggestion-item')) {
-                const name = e.target.dataset.name;
-                const lat = parseFloat(e.target.dataset.lat);
-                const lon = parseFloat(e.target.dataset.lon);
-                const bg = e.target.dataset.bg;
+            // Chercher l'élément suggestion-item le plus proche
+            const suggestionItem = e.target.closest('.suggestion-item');
+            
+            if (suggestionItem) {
+                const name = suggestionItem.dataset.name;
+                const lat = parseFloat(suggestionItem.dataset.lat);
+                const lon = parseFloat(suggestionItem.dataset.lon);
+                const bg = suggestionItem.dataset.bg;
                 
                 currentCity = { name, lat, lon, bg };
                 searchBox.value = '';
@@ -665,4 +668,3 @@
     </script>
 </body>
 </html>
-
